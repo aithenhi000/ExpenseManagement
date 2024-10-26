@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="orange">#FFA500</color> <!-- Ví dụ cho màu cam -->
+    <color name="border_pressed_color">#EC8305</color>
+    <color name="border_normal_color">#091057</color>
+    <color name="grey">#F5F3F3</color>
+    <color name="purple">#65558F</color>
+    <color name="background_purple">#FEF7FF</color>
+    <color name="background_white">#FFFFFF</color>
+</resources>
