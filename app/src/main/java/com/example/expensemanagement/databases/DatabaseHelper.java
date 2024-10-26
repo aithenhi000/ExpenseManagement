@@ -107,7 +107,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return categoryList;
     }
 
-    // Phương thức thêm khoản tiền chi
     public long addTransaction(Transaction transaction) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -125,7 +124,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
         return new Transaction(cursor.getInt(0), cursor.getDouble(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4));
     }
-
+    
     public List<TransactionSummary> getTransactionsForMonth(int month, int year) {
         String query = "SELECT t.amount, c.category_name, t.created_at, c.icon_id " +
                 "FROM Transactions t " +
@@ -133,8 +132,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "WHERE created_at LIKE ?" +
                 "ORDER BY t.created_at DESC";
         List<TransactionSummary> TransactionList = new ArrayList<>();
-        String monthStr = (month < 10 ? "0" : "") + month;
-        String[] args = {year + "-" + monthStr + "%"};
+        String[] args = {year + "-" + format_1num_to_2num(month) + "%"};
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, args);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                TransactionSummary transaction = new TransactionSummary(
+                        cursor.getDouble(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getInt(3)
+
+                );
+                TransactionList.add(transaction);
+            } while (cursor.moveToNext());
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return TransactionList; // Trả về danh sách Transaction
+    }
+    public String format_1num_to_2num(int num){
+        return (num< 10 ? "0" : "") + num;
+    }
+
+    public List<TransactionSummary> getTransactionsForDay(int day, int month, int year) {
+        String query = "SELECT t.amount, c.category_name, t.created_at, c.icon_id " +
+                "FROM Transactions t " +
+                "JOIN Categories c ON t.category_id = c.id " +
+                "WHERE created_at = ?" +
+                "ORDER BY t.created_at DESC";
+        List<TransactionSummary> TransactionList = new ArrayList<>();
+        String[] args = {year + "-" + format_1num_to_2num(month) + "-"+format_1num_to_2num(day)};
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, args);
 

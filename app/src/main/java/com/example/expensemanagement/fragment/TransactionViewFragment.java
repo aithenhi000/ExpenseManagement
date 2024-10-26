@@ -30,8 +30,9 @@ public class TransactionViewFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_DATE="date";
+    private static final String ARG_OPTION="option";
     // TODO: Rename and change types of parameters
-
+    private int option;
     private CalendarDay date;
     private RecyclerView rvTransaction;
     private TransactionAdapter transactionAdapter;
@@ -45,15 +46,16 @@ public class TransactionViewFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
+     * @param option
      * @param date Parameter 1.
      * @return A new instance of fragment TransactionViewFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TransactionViewFragment newInstance(CalendarDay date) {
+    public static TransactionViewFragment newInstance(CalendarDay date, int option) {
         TransactionViewFragment fragment = new TransactionViewFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_DATE, date);
+        args.putInt(ARG_OPTION, option);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,8 +65,12 @@ public class TransactionViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             date = getArguments().getParcelable(ARG_DATE);
+            option = getArguments().getInt(ARG_OPTION);
         }
         dbHelper = new DatabaseHelper(requireContext());
+
+
+
     }
 
     @Override
@@ -73,20 +79,27 @@ public class TransactionViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_transaction_view, container, false);
 
         rvTransaction = view.findViewById(R.id.rvTransaction);
-        loadTransactionData(date);
-        // Inflate the layout for this fragment
+        loadTransactionData();
+
         return view;
     }
 
-    private void loadTransactionData(CalendarDay date) {
-        transactionSummary = dbHelper.getTransactionsForMonth(date.getMonth()+1,date.getYear());
+    private void loadTransactionData() {
+
+        if(option == 1){
+            transactionSummary = dbHelper.getTransactionsForMonth(date.getMonth()+1,date.getYear());
+        }else{
+            transactionSummary = dbHelper.getTransactionsForDay(date.getDay(), date.getMonth()+1,date.getYear());
+        }
+        Log.d(" 9 9 99 9", "loadTransactionData: option, summary"+option);
         transactionAdapter = new TransactionAdapter(requireContext(), transactionSummary);
         rvTransaction.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvTransaction.setAdapter(transactionAdapter);
     }
 
-    public void updateData(CalendarDay date) {
+    public void updateData(CalendarDay date, int option) {
         this.date=date;
-        loadTransactionData(date);
+        this.option=option;
+        loadTransactionData();
     }
 }
