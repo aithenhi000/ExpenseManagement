@@ -63,13 +63,13 @@ public class CalendarFragment extends Fragment {
 
         if(date==null){
             CalendarDay calendarDay=CalendarDay.today();
-            updateTransactionData(calendarDay);
+            updateTransactionData(calendarDay, flag);
             showStatus(calendarDay);
         }
         calendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
             @Override
             public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
-                updateTransactionData(date);
+                updateTransactionData(date, flag);
                 showStatus(date);
             }
 
@@ -77,20 +77,20 @@ public class CalendarFragment extends Fragment {
         calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                updateTransactionData(date);
                 flag=0;
+                updateTransactionData(date, flag);
                 showStatus(date);
 
             }
         });
     }
-    private void updateTransactionData(CalendarDay date) {
+    private void updateTransactionData(CalendarDay date, int option) {
         if (transactionViewFragment == null) {
-            transactionViewFragment = TransactionViewFragment.newInstance(date);
+            transactionViewFragment = TransactionViewFragment.newInstance(date, option);
             getChildFragmentManager().beginTransaction().replace(R.id.rvTransaction, transactionViewFragment).commit();
         } else {
             // Cập nhật dữ liệu trong fragment hiện tại
-            transactionViewFragment.updateData(date); // Phương thức này cần được định nghĩa trong TransactionViewFragment
+            transactionViewFragment.updateData(date, option); // Phương thức này cần được định nghĩa trong TransactionViewFragment
         }
     }
 
