@@ -1,7 +1,7 @@
 package com.example.expensemanagement.adapter;
 
+
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,12 +9,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.expensemanagement.model.Category;
 import com.example.expensemanagement.R;
+import com.example.expensemanagement.model.SharedViewModel;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     private List<Category> categories;
@@ -44,9 +49,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        SharedViewModel viewModel = new ViewModelProvider((FragmentActivity) context).get(SharedViewModel.class);
+        Map<String, Integer> drawableMap = viewModel.getDrawableMap();
         Category category = categories.get(position);
-        Log.d("tag", "onBindViewHolder: " + category.getIcon_ID());
-        holder.icon.setImageResource(category.getIcon_ID());
+        Integer drawableId = drawableMap.get(category.getIconName());
+        holder.icon.setImageResource(drawableId);
         holder.text.setText(category.getName());
 
         // Cập nhật trạng thái background dựa trên vị trí đã chọn

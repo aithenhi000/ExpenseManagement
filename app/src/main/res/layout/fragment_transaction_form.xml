@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
+    android:layout_gravity="center"
     android:orientation="vertical">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -63,7 +64,7 @@
     <!-- Nút nhập khoản chi -->
     <Button
         android:id="@+id/btnAddTransaction"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:backgroundTint="@color/purple"

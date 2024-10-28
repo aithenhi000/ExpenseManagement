@@ -1,35 +1,31 @@
 package com.example.expensemanagement.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.expensemanagement.databases.DatabaseHelper;
 import com.example.expensemanagement.R;
-import com.example.expensemanagement.model.TransactionSummary;
-import com.example.expensemanagement.adapter.TransactionAdapter;
+import com.example.expensemanagement.model.IncomeExpenseDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
-import java.util.Calendar;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CalendarFragment extends Fragment {
     private MaterialCalendarView calendarView;
     private CalendarDay date;
     private TransactionViewFragment transactionViewFragment;
     private TextView txtStatus;
+    Map<CalendarDay, String> incomeExpenseDays;
     public CalendarFragment() {
         // Required empty public constructor
     }
@@ -53,14 +49,24 @@ public class CalendarFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
         calendarView = view.findViewById(R.id.calendarView);
         txtStatus=view.findViewById(R.id.txtStatus);
+
+
+// Tạo một danh sách các ngày có thu chi
+        incomeExpenseDays = new HashMap<>();
+        incomeExpenseDays.put(CalendarDay.from(2024, 10, 5), "+3000 -1500");
+        incomeExpenseDays.put(CalendarDay.from(2024, 10, 10), "+2000 -500");
+
+// Đính các dấu hiệu cho các ngày có thu chi
+        calendarView.addDecorators(new IncomeExpenseDecorator(incomeExpenseDays));
+
         showListByMonth();
         return view;
     }
 
 
+
     int flag=1;
     private void showListByMonth() {
-
         if(date==null){
             CalendarDay calendarDay=CalendarDay.today();
             updateTransactionData(calendarDay, flag);
@@ -80,6 +86,10 @@ public class CalendarFragment extends Fragment {
                 flag=0;
                 updateTransactionData(date, flag);
                 showStatus(date);
+                String incomeExpenseInfo = incomeExpenseDays.get(date);
+                if (incomeExpenseInfo != null) {
+                    Toast.makeText(getContext(), "Thu/Chi: " + incomeExpenseInfo, Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -87,10 +97,20 @@ public class CalendarFragment extends Fragment {
     private void updateTransactionData(CalendarDay date, int option) {
         if (transactionViewFragment == null) {
             transactionViewFragment = TransactionViewFragment.newInstance(date, option);
-            getChildFragmentManager().beginTransaction().replace(R.id.rvTransaction, transactionViewFragment).commit();
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.rvTransaction, transactionViewFragment)
+                    .commit();
         } else {
-            // Cập nhật dữ liệu trong fragment hiện tại
-            transactionViewFragment.updateData(date, option); // Phương thức này cần được định nghĩa trong TransactionViewFragment
+            // Kiểm tra xem transactionViewFragment có còn gắn kết không
+            if (transactionViewFragment.isAdded()) {
+                transactionViewFragment.updateData(date, option);
+            } else {
+                // Nếu không còn gắn kết, bạn có thể cần tạo một Fragment mới
+                transactionViewFragment = TransactionViewFragment.newInstance(date, option);
+                getChildFragmentManager().beginTransaction()
+                        .replace(R.id.rvTransaction, transactionViewFragment)
+                        .commit();
+            }
         }
     }
 

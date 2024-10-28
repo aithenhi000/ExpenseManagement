@@ -1,17 +1,28 @@
 package com.example.expensemanagement.model;
 
 public class Category {
-    private final int id;
-    private final String name;
-    private final String type;
-    private final int icon_ID;
+    private int id;
+    private String name;
+    private String type;
+    private String iconName;
 
-    public Category(int id, String name, String type, int icon_ID) {
+
+
+
+
+    public Category(int id, String name, String type, String iconName) {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.icon_ID = icon_ID;
+        this.iconName=iconName;
+
     }
+
+    public Category(String name, String iconName) {
+        this.name = name;
+        this.iconName = iconName;
+    }
+
 
     public int getId() {
         return id;
@@ -25,7 +36,11 @@ public class Category {
         return type;
     }
 
-    public int getIcon_ID() {
-        return icon_ID;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getIconName() {
+        return iconName;
     }
 }

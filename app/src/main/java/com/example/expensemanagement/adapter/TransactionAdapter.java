@@ -9,19 +9,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.expensemanagement.R;
+import com.example.expensemanagement.model.SharedViewModel;
 import com.example.expensemanagement.model.TransactionSummary;
 
 import java.util.List;
+import java.util.Map;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
-    private final List<TransactionSummary> TS_list;
+    private final List<Object[]> transactions;
     private final Context context;
 
-    public TransactionAdapter(Context context, List<TransactionSummary> TS_list) {
-        this.TS_list = TS_list;
+    public TransactionAdapter(Context context, List<Object[]> transactions) {
+        this.transactions=transactions;
         this.context = context;
     }
 
@@ -34,25 +38,31 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TransactionSummary TS = TS_list.get(position);
+        SharedViewModel viewModel = new ViewModelProvider((FragmentActivity) context).get(SharedViewModel.class);
+        Map<String, Integer> viewModelDrawableMap = viewModel.getDrawableMap();
 
-        if (position > 0 && TS_list.get(position - 1).getDate().equals(TS.getDate())) {
+        Object[] transaction = (Object[]) transactions.get(position); // Lấy giao dịch từ danh sách
+        Integer drawableId = viewModelDrawableMap.get(transaction[3]);
+        // Lấy ngày từ mảng
+        String currentDate = (String) transaction[2]; // Chỉnh sửa chỉ số thành 2
+
+        // Kiểm tra xem có cần hiển thị thời gian không
+        if (position > 0 && currentDate.equals(((Object[]) transactions.get(position - 1))[2])) {
             holder.Time.setVisibility(View.GONE);
         } else {
-            // Nếu không giống, hiển thị tên danh mục
             holder.Time.setVisibility(View.VISIBLE);
-            holder.Time.setText(TS.getDate());
+            holder.Time.setText(currentDate); // Hiển thị ngày
         }
-        Log.d("TEST", "onBindViewHolder: Id_icon" + TS.getIcon_id());
-        holder.IconImageView.setImageResource(TS.getIcon_id());
-        holder.CategoryTextView.setText(TS.getCategoryName());
-        holder.amountTextView.setText(String.format("%s$", String.valueOf(TS.getAmount())));
 
+        // Cập nhật hình ảnh biểu tượng và thông tin danh mục
+        holder.IconImageView.setImageResource(drawableId); // Lấy id biểu tượng
+        holder.CategoryTextView.setText((String) transaction[1]); // Lấy tên danh mục
+        holder.amountTextView.setText(String.format("%s$", String.valueOf(transaction[0]))); // Lấy số tiền
     }
 
     @Override
     public int getItemCount() {
-        return TS_list.size();
+        return transactions.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

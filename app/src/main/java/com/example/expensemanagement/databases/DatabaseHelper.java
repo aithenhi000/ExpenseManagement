@@ -35,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_CATEGORY_ID = "id";
     private static final String COLUMN_CATEGORY_NAME = "category_name";
     private static final String COLUMN_CATEGORY_TYPE = "category_type";
-    private static final String COLUMN_CATEGORY_ICON_ID = "icon_id";
+    private static final String COLUMN_CATEGORY_ICON_NAME = "icon_name";
 
     // Câu lệnh SQL để tạo bảng Tiền chi
     private static final String CREATE_TABLE_TRANSACTION = "CREATE TABLE " + TABLE_TRANSACTION + " ("
@@ -49,7 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_CATEGORY_NAME + " TEXT, "
             + COLUMN_CATEGORY_TYPE + " TEXT, "
-            + COLUMN_CATEGORY_ICON_ID + " INTEGER)";
+            + COLUMN_CATEGORY_ICON_NAME + " TEXT)";
 
 
     public DatabaseHelper(Context context) {
@@ -57,19 +57,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void insertDefaultCategories(SQLiteDatabase db) {
-        addCategory(db, "Food", "Expense", R.drawable.ic_food);
-        addCategory(db, "Shopping", "Expense", R.drawable.ic_shopping);
-        addCategory(db, "Vehicle", "Expense", R.drawable.ic_vehicle);
-        addCategory(db, "Salary", "Income", R.drawable.ic_salary);
-        addCategory(db, "Invest", "Income", R.drawable.ic_invest);
-        addCategory(db, "Bank", "Income", R.drawable.ic_bank);
+        addCategory(db, "Ăn uống", "Expense", "ic_food");
+        addCategory(db, "Mua sắm", "Expense", "ic_shopping");
+        addCategory(db, "Phương tiện", "Expense", "ic_vehicle");
+        addCategory(db, "Lương", "Income","ic_salary" );
+        addCategory(db, "Kinh doanh", "Income","ic_invest");
+        addCategory(db, "Tiền lãi", "Income", "ic_bank");
     }
 
-    private void addCategory(SQLiteDatabase db, String categoryName, String categoryType, Integer categoryIconID) {
+    private void addCategory(SQLiteDatabase db, String categoryName, String categoryType, String icon_name) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_CATEGORY_NAME, categoryName);
         values.put(COLUMN_CATEGORY_TYPE, categoryType);
-        values.put(COLUMN_CATEGORY_ICON_ID, categoryIconID);
+        values.put(COLUMN_CATEGORY_ICON_NAME, icon_name);
         db.insert(TABLE_CATEGORY, null, values);
     }
 
@@ -87,17 +87,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public List<Category> loadCategories() {
+    public List<Category> loadCategories(String transactionType) {
         List<Category> categoryList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Categories", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM Categories WHERE category_type=?", new String[] {transactionType});
         if (cursor.moveToFirst()) {
             do {
                 Category category = new Category(
                         cursor.getInt(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        cursor.getInt(3)
+                        cursor.getString((3))
                 );
                 categoryList.add(category);
             } while (cursor.moveToNext());
@@ -125,72 +125,72 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return new Transaction(cursor.getInt(0), cursor.getDouble(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4));
     }
     
-    public List<TransactionSummary> getTransactionsForMonth(int month, int year) {
-        String query = "SELECT t.amount, c.category_name, t.created_at, c.icon_id " +
+    public List<Object[]> getTransactionsForMonth(int month, int year) {
+        String query = "SELECT t.amount, c.category_name, t.created_at, c.icon_name " +
                 "FROM Transactions t " +
                 "JOIN Categories c ON t.category_id = c.id " +
                 "WHERE created_at LIKE ?" +
                 "ORDER BY t.created_at DESC";
-        List<TransactionSummary> TransactionList = new ArrayList<>();
+        List<Object[]> transactionList = new ArrayList<>();
         String[] args = {year + "-" + format_1num_to_2num(month) + "%"};
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, args);
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                TransactionSummary transaction = new TransactionSummary(
+                Object[] transaction = new Object[]{
                         cursor.getDouble(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        cursor.getInt(3)
-
-                );
-                TransactionList.add(transaction);
+                        cursor.getString(3)
+                };
+                Log.d("test", "getTransactionsForMonth: "+transaction[0]);
+                transactionList.add(transaction);
             } while (cursor.moveToNext());
         }
         if (cursor != null) {
             cursor.close();
         }
 
-        return TransactionList; // Trả về danh sách Transaction
+        return transactionList; // Trả về danh sách Transaction
     }
     public String format_1num_to_2num(int num){
         return (num< 10 ? "0" : "") + num;
     }
 
-    public List<TransactionSummary> getTransactionsForDay(int day, int month, int year) {
-        String query = "SELECT t.amount, c.category_name, t.created_at, c.icon_id " +
+    public List<Object[]> getTransactionsForDay(int day, int month, int year) {
+        String query = "SELECT t.amount, c.category_name, t.created_at, c.icon_name " +
                 "FROM Transactions t " +
                 "JOIN Categories c ON t.category_id = c.id " +
                 "WHERE created_at = ?" +
                 "ORDER BY t.created_at DESC";
-        List<TransactionSummary> TransactionList = new ArrayList<>();
+        List<Object[]> transactionList = new ArrayList<>();
         String[] args = {year + "-" + format_1num_to_2num(month) + "-"+format_1num_to_2num(day)};
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, args);
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                TransactionSummary transaction = new TransactionSummary(
-                        cursor.getDouble(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getInt(3)
-
-                );
-                TransactionList.add(transaction);
+                Object[] transaction = new Object[]{
+                        cursor.getDouble(0),  // amount
+                        cursor.getString(1),  // category_name
+                        cursor.getString(2),  // created_at
+                        cursor.getString(3)      // icon_name
+                };
+                transactionList.add(transaction);
             } while (cursor.moveToNext());
         }
         if (cursor != null) {
             cursor.close();
         }
 
-        return TransactionList; // Trả về danh sách Transaction
+        return transactionList; // Trả về danh sách các mảng
     }
 
 
+
     public List<TransactionSummary> getTransactionsByCategory(String[] categoryName) {
-        String query = "SELECT t.amount, c.category_name, t.created_at, c.icon_id " +
+        String query = "SELECT t.amount, c.category_name, t.created_at, c.icon_name " +
                 "FROM Transactions t " +
                 "JOIN Categories c ON t.category_id = c.id " +
                 "WHERE c.category_type = ?";
@@ -209,7 +209,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getInt(3)
 
                 );
-                Log.d("tag", "summary" + cursor.getDouble(0));
                 transactionSummaries.add(summary); // Thêm vào danh sách
             } while (cursor.moveToNext());
         }

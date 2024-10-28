@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class TransactionFormFragment extends Fragment {
+    private static final String ARG_TRANSACTION_TYPE = "transaction_type";
+    private String transactionType; // "Expense" hoặc "Income"
     private TextView tvDate;
     private TextInputEditText editNote, editMoney;
     private RecyclerView rvTransaction, rvCategory;
@@ -39,35 +41,49 @@ public class TransactionFormFragment extends Fragment {
     private List<TransactionSummary> transactionSummary;
     private List<Category> categoryList;
     private CategoryAdapter categoryAdapter;
+    private List<Category> categories;
+    private Button btnAddTransaction;
+    public static TransactionFormFragment newInstance(String transactionType) {
+        TransactionFormFragment fragment = new TransactionFormFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_TRANSACTION_TYPE, transactionType);
+        fragment.setArguments(args);
+        return fragment;
+    }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            transactionType = getArguments().getString(ARG_TRANSACTION_TYPE);
+        }
+        dbHelper = new DatabaseHelper(requireContext());
+        categoryList = dbHelper.loadCategories(transactionType);
 
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_expense, container, false);
+        View view = inflater.inflate(R.layout.fragment_transaction_form, container, false);
         tvDate = view.findViewById(R.id.tvDate);
         editNote = view.findViewById(R.id.editNote);
         editMoney = view.findViewById(R.id.editMoney);
         rvCategory = view.findViewById(R.id.rvCategory);
-        //s rvTransaction = view.findViewById(R.id.rvTransaction);
-        dbHelper = new DatabaseHelper(requireContext());
-//        Map<String, Double> expensesMap = new HashMap<>();
-//        expensesMap = dbHelper.calculateAllExpenses();
-//        expensesMap.forEach((categoryName, totalExpense) -> {
-//        });
-
+        btnAddTransaction = view.findViewById(R.id.btnAddTransaction);
 
         showDatePickerDialog();
 
         createCategoryView();
-        //Create Expense RecycleView
 
-//
+        if(Objects.equals(transactionType, "Expense")){
+            btnAddTransaction.setText("Nhập khoản chi");
 
-        Button btnAddExpense = view.findViewById(R.id.btnAddTransaction);
-        btnAddExpense.setOnClickListener(new View.OnClickListener() {
+        }else {
+            btnAddTransaction.setText("Nhập khoản thu");
+        }
+        btnAddTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addExpense();
+                addTransaction();
 
             }
         });
@@ -76,9 +92,9 @@ public class TransactionFormFragment extends Fragment {
     }
 
     private void createCategoryView() {
-        categoryList = dbHelper.loadCategories();
+
         categoryAdapter = new CategoryAdapter(requireContext(), categoryList);
-        rvCategory.setLayoutManager(new GridLayoutManager(requireContext(), 4));
+        rvCategory.setLayoutManager(new GridLayoutManager(requireContext(), 3));
         rvCategory.setAdapter(categoryAdapter);
 
 
@@ -88,7 +104,7 @@ public class TransactionFormFragment extends Fragment {
         });
     }
 
-    private void addExpense() {
+    private void addTransaction() {
         String note = "No note";
         String date = formatDate(tvDate.getText().toString());
         note = Objects.requireNonNull(editNote.getText()).toString();
@@ -97,7 +113,6 @@ public class TransactionFormFragment extends Fragment {
             Toast.makeText(getContext(), "Add Thất Bại, Vui lòng nhập Tiền chi", Toast.LENGTH_SHORT).show();
             return;
         }
-        Log.d("tag", "addExpense: " + selectedCategory.getName());
         double expense = Double.parseDouble(expenseStr);
         long expenseId = dbHelper.addTransaction(new Transaction(expense, selectedCategory.getId(), date, note));
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Định nghĩa kiểu văn bản cho tiêu đề của MaterialCalendarView -->
+    <style name="CalendarHeaderTextStyle">
+        <item name="android:textColor">@color/purple</item>  <!-- Màu chữ -->
+        <item name="android:textSize">16sp</item>                <!-- Kích thước chữ -->
+        <item name="android:fontFamily">sans-serif-medium</item> <!-- Phông chữ -->
+        <item name="android:textStyle">bold</item>                <!-- Đậm -->
+    </style>
+    <style name="CalendarDateTextStyle">
+        <item name="android:textColor">@color/purple</item>  <!-- Màu chữ -->         <!-- Kích thước chữ -->
+        <item name="android:fontFamily">sans-serif-medium</item> <!-- Phông chữ -->         <!-- Đậm -->
+    </style>
+
+</resources>

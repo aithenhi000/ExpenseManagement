@@ -15,7 +15,6 @@ public class Transaction {
         this.category_id = categoryId;
         this.note = note;
         this.date = date;
-
     }
 
     public Transaction(double amount, int categoryId, String date, String note) {

@@ -6,11 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.expensemanagement.R;
 import com.example.expensemanagement.adapter.ViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class TransactionFragment extends Fragment {
     @Override
@@ -19,10 +20,21 @@ public class TransactionFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_transaction, container, false);
         TabLayout tabLayout = view.findViewById(R.id.tabLayout);
-        ViewPager viewPager = view.findViewById(R.id.vpTransaction);
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        ViewPager2 viewPager = view.findViewById(R.id.vpTransaction);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity());
         viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> {
+                    switch (position) {
+                        case 0:
+                            tab.setText("Thu nhập");
+                            break;
+                        case 1:
+                            tab.setText("Chi tiêu");
+                            break;
+                    }
+                }).attach();
+
 
         return view;
     }

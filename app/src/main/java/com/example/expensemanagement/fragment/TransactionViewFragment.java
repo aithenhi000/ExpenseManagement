@@ -17,8 +17,10 @@ import com.example.expensemanagement.databases.DatabaseHelper;
 import com.example.expensemanagement.model.TransactionSummary;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,7 +39,7 @@ public class TransactionViewFragment extends Fragment {
     private RecyclerView rvTransaction;
     private TransactionAdapter transactionAdapter;
     private DatabaseHelper dbHelper;
-    private List<TransactionSummary> transactionSummary;
+
 
     public TransactionViewFragment() {
         // Required empty public constructor
@@ -68,9 +70,6 @@ public class TransactionViewFragment extends Fragment {
             option = getArguments().getInt(ARG_OPTION);
         }
         dbHelper = new DatabaseHelper(requireContext());
-
-
-
     }
 
     @Override
@@ -85,14 +84,16 @@ public class TransactionViewFragment extends Fragment {
     }
 
     private void loadTransactionData() {
-
+        List<Object[]> transactions=new ArrayList<>();
         if(option == 1){
-            transactionSummary = dbHelper.getTransactionsForMonth(date.getMonth()+1,date.getYear());
+            Log.d("TAG", "loadTransactionData: +"+date.getMonth());
+            transactions = dbHelper.getTransactionsForMonth(date.getMonth()+1,date.getYear());
+            //Object[] object = (Object[]) transactions.get(0);
+            //Log.d("testV", "loadTransactionData: "+object[0]);
         }else{
-            transactionSummary = dbHelper.getTransactionsForDay(date.getDay(), date.getMonth()+1,date.getYear());
+            transactions = dbHelper.getTransactionsForDay(date.getDay(), date.getMonth()+1,date.getYear());
         }
-        Log.d(" 9 9 99 9", "loadTransactionData: option, summary"+option);
-        transactionAdapter = new TransactionAdapter(requireContext(), transactionSummary);
+        transactionAdapter = new TransactionAdapter(requireContext(), transactions);
         rvTransaction.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvTransaction.setAdapter(transactionAdapter);
     }
