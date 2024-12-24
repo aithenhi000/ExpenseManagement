@@ -3,15 +3,15 @@ plugins {
 }
 
 android {
-    namespace = "com.example.expensemanagement"
+    namespace = "com.khanh.expensemanagement"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.expensemanagement"
-        minSdk = 24
+        applicationId = "com.khanh.expensemanagement"
+        minSdk = 28
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 4
+        versionName = "1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -34,7 +34,7 @@ android {
 dependencies {
 
 
-    implementation ("com.prolificinteractive:material-calendarview:1.4.3")
+    implementation("com.prolificinteractive:material-calendarview:1.4.3")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(libs.appcompat)
     implementation(libs.material)

@@ -1,40 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".fragment.CalendarFragment">
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        android:elevation="@dimen/cardview_compat_inset_shadow">
-        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-            app:mcv_showOtherDates="none"
-            android:id="@+id/calendarView"
-            app:mcv_weekDayTextAppearance="@color/purple"
-            app:mcv_arrowColor="@color/purple"
-            app:mcv_dateTextAppearance="@style/CalendarDateTextStyle"
-            app:mcv_headerTextAppearance="@style/CalendarHeaderTextStyle"
-            android:layout_width="match_parent"
-            app:mcv_firstDayOfWeek="monday"
-            android:layout_height="wrap_content" />
-    </androidx.cardview.widget.CardView>
-    <TextView
-        android:textColor="@color/purple"
-        android:id="@+id/txtStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/rvTransaction">
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/background_light"
+                app:mcv_arrowColor="@color/purple"
+                app:mcv_dateTextAppearance="@style/CalendarDateTextStyle"
+                app:mcv_firstDayOfWeek="monday"
+                app:mcv_headerTextAppearance="@style/CalendarHeaderTextStyle"
+                app:mcv_selectionColor="@color/purple_gra"
+                app:mcv_showOtherDates="none"
+                app:mcv_tileHeight="40dp"
+                app:mcv_weekDayTextAppearance="@style/WeekDaysTextStyle" />
+
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="55dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/month_picker"
+                android:elevation="20dp"
+                android:gravity="center"
+                android:outlineAmbientShadowColor="@color/blue_gra"
+                android:padding="6dp"
+                android:text="TextView"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:id="@+id/total"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+
+        </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/rvTransaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
 
 
 </LinearLayout>

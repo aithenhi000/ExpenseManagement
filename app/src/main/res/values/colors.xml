@@ -5,9 +5,50 @@
     <color name="orange">#FFA500</color> <!-- Ví dụ cho màu cam -->
     <color name="border_pressed_color">#EC8305</color>
     <color name="border_normal_color">#091057</color>
-    <color name="grey">#F5F3F3</color>
+    <color name="light_grey">#F5F3F3</color>
+    <color name="grey">#EBEEF4</color>
     <color name="purple">#65558F</color>
     <color name="purple_2">#A29ABC</color>
     <color name="background_purple">#FEF7FF</color>
-    <color name="background_white">#FFFFFF</color>
+    <color name="income">#57C55A</color>
+    <color name="expense">#FF3D3D</color>
+    <color name="red">#C62E2E</color>
+    <color name="green">#54C392</color>
+    <color name="blue_gra">#3494E6</color>
+    <color name="pink_gra">#EC6EAD</color>
+    <color name="purple_gra">#D2AAF7</color>
+    <color name="light_blue_gra">#92D5F2</color>
+    <color name="purple_light_gra">#9C8CF2</color>
+    <color name="strong_blue">#0A2252</color>
+    <color name="light2_blue_gra">#EAF6FF</color>
+    <color name="purple_gradient_btn">#8E2DE2</color>
+    <color name="blue_gradient_btn">#4A00E0</color>
+    <color name="light_purple_1">#D3DDFC</color>
+    <color name="light_purple_2">#BAB7F7</color>
+
+    <color name="blue">#88C6E7</color>
+    <!-- Base Colors -->
+    <color name="primary_purple">#D1A9F0</color> <!-- Màu chính (tim nhạt) -->
+    <color name="primary_white">#FFFFFF
+    </color> <!-- Màu trắng (nền chính hoặc chữ nổi trên nền tối) -->
+    <color name="secondary_purple">#BAB4F7</color> <!-- Màu phụ (tim nhạt sáng hơn) -->
+    <color name="primary_black">#000000</color> <!-- Màu đen (text hoặc icon) -->
+
+    <!-- Suggested Additional Colors -->
+    <color name="accent_pink">#F7A9D3</color> <!-- Màu nhấn (hồng nhạt, tạo điểm nhấn nhẹ nhàng) -->
+    <color name="accent_green">#A9F0D1
+    </color> <!-- Màu nhấn khác (xanh nhạt, liên tưởng đến thu nhập) -->
+    <color name="neutral_grey">#EDEDED</color> <!-- Màu trung tính (nền phụ hoặc vùng phân cách) -->
+    <color name="error_red">#FF6F61</color> <!-- Màu lỗi (cho chi tiêu vượt mức hoặc cảnh báo) -->
+    <color name="success_green">#4CAF50
+    </color> <!-- Màu thành công (thu nhập hoặc trạng thái OK) -->
+
+    <!-- Background Variations -->
+    <color name="background_light">#F9F6FF
+    </color> <!-- Nền sáng gần trắng (thêm chiều sâu cho nền) -->
+    <color name="background_dark">#3A2A56</color> <!-- Nền tối (cho dark mode hoặc header đậm) -->
+
+    <!-- Divider and Borders -->
+    <color name="divider_grey">#C4C4C4</color> <!-- Màu chia cách hoặc viền nhạt -->
+
 </resources>

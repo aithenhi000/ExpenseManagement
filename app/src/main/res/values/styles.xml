@@ -2,14 +2,46 @@
 <resources>
     <!-- Định nghĩa kiểu văn bản cho tiêu đề của MaterialCalendarView -->
     <style name="CalendarHeaderTextStyle">
-        <item name="android:textColor">@color/purple</item>  <!-- Màu chữ -->
-        <item name="android:textSize">16sp</item>                <!-- Kích thước chữ -->
-        <item name="android:fontFamily">sans-serif-medium</item> <!-- Phông chữ -->
-        <item name="android:textStyle">bold</item>                <!-- Đậm -->
-    </style>
-    <style name="CalendarDateTextStyle">
-        <item name="android:textColor">@color/purple</item>  <!-- Màu chữ -->         <!-- Kích thước chữ -->
-        <item name="android:fontFamily">sans-serif-medium</item> <!-- Phông chữ -->         <!-- Đậm -->
+        <item name="android:textColor">@color/purple_gra
+        </item>  <!-- Màu chữ -->         <!-- Đậm -->
     </style>
 
+    <style name="CalendarDateTextStyle">
+        <item name="android:textColor">@color/purple_light_gra
+        </item>  <!-- Màu chữ -->         <!-- Kích thước chữ -->
+    </style>
+
+    <style name="WeekDaysTextStyle">
+        <item name="android:textColor">@color/purple_light_gra</item>  <!-- Màu chữ -->
+    </style>
+
+    <style name="TextInputLayoutHeight40">
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <style name="TextViewForm">
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+
+    <style name="TextInputForm">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@drawable/textinput_form_bg</item>
+    </style>
+
+    <style name="TextViewMore">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/tv_more_bg</item>
+        <item name="android:layout_marginHorizontal">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:gravity">center|left</item>
+    </style>
 </resources>

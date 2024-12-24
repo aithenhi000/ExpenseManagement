@@ -1,0 +1,109 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/titleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/white_corner"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Thông tin giao dịch"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginHorizontal="80dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/line_bottom" />
+
+        <TextView
+            android:id="@+id/tvMoney"
+            style="@style/TextViewForm"
+            android:text="Số tiền" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editMoney"
+            style="@style/TextInputForm"
+            android:inputType="number"
+            android:maxLength="50" />
+
+        <TextView
+            android:id="@+id/tiDate"
+            style="@style/TextViewForm"
+            android:text="Ngày" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tvDate"
+            style="@style/TextInputForm"
+            android:focusable="false" />
+
+        <TextView
+            android:id="@+id/tvNote"
+            style="@style/TextViewForm"
+            android:layout_below="@id/tvDate"
+            android:text="Ghi chú" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editNote"
+            style="@style/TextInputForm"
+            android:maxLength="150"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/tvCategory"
+            style="@style/TextViewForm"
+            android:text="Danh mục" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:padding="10dp"
+            android:spinnerMode="dropdown" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/button1"
+            android:text="Lưu thay đổi"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@null" />
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/red"
+        android:elevation="16dp"
+        android:paddingHorizontal="24dp"
+        android:text="Xóa giao dịch"
+        android:textColor="@android:color/white" />
+</LinearLayout>

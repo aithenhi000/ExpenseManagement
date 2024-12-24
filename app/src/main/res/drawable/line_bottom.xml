@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <size android:height="1dp" /> <!-- Độ dày của đường gạch chân -->
-    <solid android:color="@color/purple" /> <!-- Màu đường gạch chân -->
+    <gradient android:startColor="@color/light_blue_gra" android:endColor="@color/purple_gra"/> <!-- Màu đường gạch chân -->
 </shape>
 
