@@ -19,13 +19,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.khanh.expensemanagement.R;
 import com.khanh.expensemanagement.adapter.CategoryAdapter;
-import com.khanh.expensemanagement.model.Category;
-import com.khanh.expensemanagement.model.Expense;
+import com.khanh.expensemanagement.enums.Category;
+import com.khanh.expensemanagement.model.Transaction;
 import com.khanh.expensemanagement.model.Utils;
-import com.khanh.expensemanagement.repository.ExpenseDAO;
-import com.khanh.expensemanagement.repository.IncomeDAO;
+import com.khanh.expensemanagement.repository.TransactionDAO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionFormFragment extends Fragment {
@@ -68,26 +66,20 @@ public class TransactionFormFragment extends Fragment {
         btnSaveExpense = view.findViewById(R.id.btnSaveExpense);
         tvCategory = view.findViewById(R.id.tvCategory);
 
-
         if (transactionType.equals("expense")) {
             btnSaveExpense.setText("Nhập khoản chi");
+            tvCategory.setText("Ăn uống");
         } else {
             btnSaveExpense.setText("Nhập khoản thu");
-        }
-        List<Category> categories = new ArrayList<>();
-        if (transactionType.equals("expense")) {
-            categories.add(new Category("Ăn uống", R.drawable.ic_food));
-            categories.add(new Category("Di chuyển", R.drawable.ic_dichuyen));
-        } else {
-            categories.add(new Category("Trợ cấp", R.drawable.ic_trocap));
-            categories.add(new Category("Lương", R.drawable.ic_salary));
-        }
+            tvCategory.setText("Lương");
 
+        }
+        List<Category> categories = Category.getExpenseCategories(transactionType);
 
         CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(), categories);
         gridViewCategories.setAdapter(categoryAdapter);
         gridViewCategories.setOnItemClickListener((parent, view1, position, id) -> {
-            selectedCategory = categories.get(position).getName();
+            selectedCategory = categories.get(position).getDisplayName();
             tvCategory.setText(selectedCategory);
         });
 
@@ -110,36 +102,22 @@ public class TransactionFormFragment extends Fragment {
             Toast.makeText(getContext(), "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
-        long amount = Long.parseLong(amountText);
+        Long amount = Long.parseLong(amountText);
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        Expense expense = new Expense(note, amount, selectedCategory, date);
-        if (transactionType.equals("expense")) {
-            ExpenseDAO expenseDAO = new ExpenseDAO();
-            expenseDAO.add(expense, userId, new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Khoản chi đã được lưu và tổng chi đã được cập nhật", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Lỗi khi lưu khoản chi", Toast.LENGTH_SHORT).show();
-                    }
+        Transaction transaction = new Transaction(note, amount, selectedCategory, date, transactionType);
+        TransactionDAO expenseDAO = new TransactionDAO();
+        expenseDAO.add(transaction, userId, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getContext(), "Khoản chi đã được lưu và tổng chi đã được cập nhật", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Lỗi khi lưu khoản chi", Toast.LENGTH_SHORT).show();
                 }
-            });
-        } else {
-            IncomeDAO incomeDAO = new IncomeDAO();
-            incomeDAO.add(expense, userId, new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Khoản Thu đã được lưu và tổng Thu đã được cập nhật", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Lỗi khi lưu khoản Thu", Toast.LENGTH_SHORT).show();
-                    }
-                }
+            }
+        });
 
-            });
-        }
 
     }
 }

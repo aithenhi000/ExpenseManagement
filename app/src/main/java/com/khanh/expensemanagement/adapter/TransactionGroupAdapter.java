@@ -11,18 +11,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.khanh.expensemanagement.R;
-import com.khanh.expensemanagement.model.CategoryIconMapper;
-import com.khanh.expensemanagement.model.CategoryTotal;
-import com.khanh.expensemanagement.model.Utils;
+import com.khanh.expensemanagement.enums.Category;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TransactionGroupAdapter extends RecyclerView.Adapter<TransactionGroupAdapter.ViewHolder> {
-    private final List<CategoryTotal> transactions;
     private final Context context;
+    private List<Map.Entry<String, Float>> categoryList;
 
-    public TransactionGroupAdapter(List<CategoryTotal> transactions, Context context) {
-        this.transactions = transactions;
+    public TransactionGroupAdapter(Map<String, Float> categoryPercentages, Context context) {
+        categoryList = new ArrayList<>(categoryPercentages.entrySet());
         this.context = context;
     }
 
@@ -35,16 +35,18 @@ public class TransactionGroupAdapter extends RecyclerView.Adapter<TransactionGro
 
     @Override
     public void onBindViewHolder(@NonNull TransactionGroupAdapter.ViewHolder holder, int position) {
-        CategoryTotal categoryTotal = transactions.get(position);
-        holder.IconImageView.setImageDrawable(CategoryIconMapper.getIconByCategory(context, categoryTotal.getCategory_name())); // Lấy id biểu tượng
-        holder.CategoryTextView.setText(categoryTotal.getCategory_name());
-        holder.amountTextView.setText(Utils.formatCurrency(categoryTotal.getTotalAmount()));
-        holder.percent.setText(categoryTotal.getPercentage() + "%");
+        Map.Entry<String, Float> categoryEntry = categoryList.get(position);
+        String category = categoryEntry.getKey();
+        Float percentage = categoryEntry.getValue();
+        holder.IconImageView.setImageResource(Category.fromString(category)); // Lấy id biểu tượng
+        holder.CategoryTextView.setText(category);
+        holder.percent.setText(String.format("%.2f%%", percentage));
+
     }
 
     @Override
     public int getItemCount() {
-        return transactions.size();
+        return categoryList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -54,7 +56,6 @@ public class TransactionGroupAdapter extends RecyclerView.Adapter<TransactionGro
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             IconImageView = itemView.findViewById(R.id.icon);
-            amountTextView = itemView.findViewById(R.id.amount);
             CategoryTextView = itemView.findViewById(R.id.category);
             percent = itemView.findViewById(R.id.percent);
         }

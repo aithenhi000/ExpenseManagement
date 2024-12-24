@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,25 +21,23 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.khanh.expensemanagement.R;
-import com.khanh.expensemanagement.model.CategoryTotal;
-import com.khanh.expensemanagement.model.Utils;
+import com.khanh.expensemanagement.adapter.TransactionGroupAdapter;
+import com.khanh.expensemanagement.repository.TransactionDAO;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GeneralContentFragment extends Fragment {
     private static final String ARG_DATE = "date";
-    private ArrayList<CategoryTotal> categoryTotals;
     private LinearLayout lnIncome, lnExpense;
-    private PieDataSet pieDataSet;
-    private PieData pieData;
     private PieChart pieChart;
     private CalendarDay currentDate;
-    private TextView tvIncomeTotal, tvStatusIncome, tvExpenseTotal, tvStatusExpense, balance, tvIncome, tvExpense, des1, des2;
-    private String type = "Income"; //mặc định cho view là income = true
+    private TextView tvIncomeTotal, tvExpenseTotal, tvIncome, tvExpense;
+    private String type = "income"; //mặc định cho view là income = true
     private RecyclerView recyclerView;
-    private CalendarDay currentMonth;
+    private TransactionDAO transactionDAO;
 
     public GeneralContentFragment() {
         // require a empty public constructor
@@ -68,27 +65,22 @@ public class GeneralContentFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_general_content, container, false);
         tvIncomeTotal = view.findViewById(R.id.tvIncomeTotal);
         tvIncome = view.findViewById(R.id.tvIncome);
-        tvStatusIncome = view.findViewById(R.id.tvStatusIncome);
         tvExpenseTotal = view.findViewById(R.id.tvExpenseTotal);
         tvExpense = view.findViewById(R.id.tvExpense);
         recyclerView = view.findViewById(R.id.rvTransaction);
-        tvStatusExpense = view.findViewById(R.id.tvStatusExpense);
-        balance = view.findViewById(R.id.balance);
         pieChart = view.findViewById(R.id.pieChart);
 
         lnIncome = view.findViewById(R.id.lnIncome);
         lnExpense = view.findViewById(R.id.lnExpense);
-        des1 = view.findViewById(R.id.des1);
-        des2 = view.findViewById(R.id.des2);
 
-        displayTransactionByCategory();
+        transactionDAO = new TransactionDAO();
         lnIncome.setSelected(true);
         lnExpense.setSelected(false);
         displayChart(type);
         setColorTextView(type);
 
-        lnIncome.setOnClickListener(v -> updateUI("Income", 0));
-        lnExpense.setOnClickListener(v -> updateUI("Expense", 1));
+        lnIncome.setOnClickListener(v -> updateUI("income", 0));
+        lnExpense.setOnClickListener(v -> updateUI("expense", 1));
 
         return view;
     }
@@ -96,10 +88,8 @@ public class GeneralContentFragment extends Fragment {
     private void updateUI(String newType, int viewPagerPosition) {
         if (!type.equals(newType)) {
             type = newType;
-            lnIncome.setSelected(type.equals("Income"));
-            lnExpense.setSelected(type.equals("Expense"));
-            displayTransactionByCategory();
-            // Cập nhật màu sắc và biểu đồ
+            lnIncome.setSelected(type.equals("income"));
+            lnExpense.setSelected(type.equals("expense"));
             setColorTextView(type);
             displayChart(type);
 
@@ -110,117 +100,112 @@ public class GeneralContentFragment extends Fragment {
         int selectedColor = Color.BLACK;
         int deselectedColor = Color.WHITE;
 
-        if (type.equals("Income")) {
-            des1.setTextColor(selectedColor);
+        if (type.equals("income")) {
+
             tvIncomeTotal.setTextColor(selectedColor);
             tvIncome.setTextColor(selectedColor);
-            des2.setTextColor(deselectedColor);
             tvExpenseTotal.setTextColor(deselectedColor);
             tvExpense.setTextColor(deselectedColor);
         } else {
-            des1.setTextColor(deselectedColor);
             tvIncomeTotal.setTextColor(deselectedColor);
             tvIncome.setTextColor(deselectedColor);
-            des2.setTextColor(selectedColor);
             tvExpenseTotal.setTextColor(selectedColor);
             tvExpense.setTextColor(selectedColor);
         }
     }
 
+    public void displayCategoryPercentages(Map<String, Float> categoryPercentages) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        TransactionGroupAdapter adapter = new TransactionGroupAdapter(categoryPercentages, getContext());
+        recyclerView.setAdapter(adapter);
+    }
+
 
     private void displayChart(String type) {
-        if (categoryTotals.isEmpty()) {
-            pieChart.clear();
-            pieChart.setNoDataText("Không có dữ liệu");
-            pieChart.setNoDataTextColor(Color.GRAY);
-            pieChart.setNoDataTextTypeface(Typeface.DEFAULT_BOLD);
-            return;
-        }
+        String monthText = currentDate.getMonth() < 10 ? "0" + (currentDate.getMonth() + 1) : String.valueOf(currentDate.getMonth() + 1);
+        String date = currentDate.getYear() + "-" + monthText;
 
-        // Tạo danh sách PieEntry để lưu các phần của biểu đồ
-        List<PieEntry> pieEntries = new ArrayList<>();
-        float remaining_percentage = 0;
-
-        for (CategoryTotal categoryTotal : categoryTotals) {
-            float percentage = categoryTotal.getPercentage();
-            if (percentage > 10) {
-                String categoryName = categoryTotal.getCategory_name();  // Lấy tên danh mục
-                pieEntries.add(new PieEntry(percentage, categoryName));
-            } else {
-                remaining_percentage += percentage;
-            }
-
-        }
-        pieEntries.add(new PieEntry(remaining_percentage, "Còn lại"));
-
-        // Thiết lập PieDataSet
-        pieDataSet = new PieDataSet(pieEntries, "");
-        if (type.equals("Expense")) {
-            pieDataSet.setColors(
-                    Color.parseColor("#FFB3BA"),
-                    Color.parseColor("#FFDFBA"),
-                    Color.parseColor("#FFFFBA"),
-                    Color.parseColor("#BAFFC9"),
-                    Color.parseColor("#BAE1FF"),
-                    Color.parseColor("#E6B3FF")
-            );
-        } else {
-            pieDataSet.setColors(
-                    Color.parseColor("#B3E5FC"),
-                    Color.parseColor("#B2EBF2"),
-                    Color.parseColor("#C8E6C9"),
-                    Color.parseColor("#D1C4E9"),
-                    Color.parseColor("#BBDEFB"),
-                    Color.parseColor("#E0F7FA")
-            );
-        }
-
-        // Thiết lập thuộc tính của PieDataSet
-        pieDataSet.setValueTextColor(Color.BLACK);
-        pieDataSet.setValueTextSize(12f);
-        pieDataSet.setSliceSpace(10f);
-
-        // Tạo PieData và thiết lập cho PieChart
-        pieData = new PieData(pieDataSet);
-        pieChart.setData(pieData);
-        pieChart.invalidate(); // Cập nhật biểu đồ
-
-        // Thiết lập các thuộc tính bổ sung cho biểu đồ
-        pieChart.setUsePercentValues(true);
-        pieData.setValueFormatter(new ValueFormatter() {
+        Log.d("TAG", "displayChart: " + date);
+        transactionDAO.calculateTotalByTypeForMonth(date, new TransactionDAO.TotalIncomeTypeCallback() {
             @Override
-            public String getFormattedValue(float value) {
-                return String.format("%.2f%%", value);
+            public void onTotalIncomeCalculated(Map<String, Double> totalByType) {
+                tvIncomeTotal.setText(String.valueOf(totalByType.get("income")));
+                tvExpenseTotal.setText(String.valueOf(totalByType.get("expense")));
             }
         });
-        pieChart.getDescription().setEnabled(false);
+
+        transactionDAO.calculateCategoryPercentagesByMonth(date, type, new TransactionDAO.TotalIncomeCallback() {
+
+            @Override
+            public void onCategoryPercentagesCalculated(Map<String, Float> categoryPercentages) {
+                displayCategoryPercentages(categoryPercentages);
+                float remaining_percentage = 0;
+                List<PieEntry> pieEntries = new ArrayList<>();
+                for (Map.Entry<String, Float> entry : categoryPercentages.entrySet()) {
+
+                    String category = entry.getKey();
+                    float percentage = entry.getValue();
+                    if (percentage > 10) {
+                        pieEntries.add(new PieEntry(percentage, category));
+                    } else {
+                        remaining_percentage += percentage;
+                    }
+                }
+
+                if (categoryPercentages.isEmpty()) {
+                    pieChart.clear();
+                    pieChart.setNoDataText("Không có dữ liệu");
+                    pieChart.setNoDataTextColor(Color.GRAY);
+                    pieChart.setNoDataTextTypeface(Typeface.DEFAULT_BOLD);
+                    return;
+                }
+                pieEntries.add(new PieEntry(remaining_percentage, "Còn lại"));
+
+                PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
+                if (type.equals("Expense")) {
+                    pieDataSet.setColors(
+                            Color.parseColor("#FFB3BA"),
+                            Color.parseColor("#FFDFBA"),
+                            Color.parseColor("#FFFFBA"),
+                            Color.parseColor("#BAFFC9"),
+                            Color.parseColor("#BAE1FF"),
+                            Color.parseColor("#E6B3FF")
+                    );
+                } else {
+                    pieDataSet.setColors(
+                            Color.parseColor("#B3E5FC"),
+                            Color.parseColor("#B2EBF2"),
+                            Color.parseColor("#C8E6C9"),
+                            Color.parseColor("#D1C4E9"),
+                            Color.parseColor("#BBDEFB"),
+                            Color.parseColor("#E0F7FA")
+                    );
+                }
+
+                // Thiết lập các thuộc tính của PieDataSet
+                pieDataSet.setValueTextColor(Color.BLACK);
+                pieDataSet.setValueTextSize(12f);
+                pieDataSet.setSliceSpace(10f);
+
+                // Tạo PieData và thiết lập cho PieChart
+                PieData pieData = new PieData(pieDataSet);
+                pieChart.setData(pieData);
+                pieChart.invalidate(); // Cập nhật biểu đồ
+
+                // Thiết lập các thuộc tính bổ sung cho biểu đồ
+                pieChart.setUsePercentValues(true);
+                pieData.setValueFormatter(new ValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return String.format("%.2f%%", value);
+                    }
+                });
+                pieChart.getDescription().setEnabled(false);
+
+            }
+        });
+
     }
 
 
-    private void updateStatusText(TextView textView, Long currentTotal, Long previousTotal, int increaseColor, int decreaseColor) {
-        long difference = currentTotal - previousTotal;
-        if (difference > 0) {
-            textView.setTextColor(ContextCompat.getColor(requireContext(), increaseColor));
-            textView.setText("Tăng " + Utils.formatCurrency(difference));
-        } else if (difference < 0) {
-            textView.setTextColor(ContextCompat.getColor(requireContext(), decreaseColor));
-            textView.setText("Giảm " + Utils.formatCurrency(Math.abs(difference)));
-        } else {
-            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.strong_blue));
-            textView.setText("Không thay đổi");
-        }
-    }
-
-    private void displayTransactionByCategory() {
-        Log.d("TAG", "onResume: displayTransactionByCategory");
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-    }
-
-
-    public void updateContent() {
-        displayTransactionByCategory();
-        displayChart(type);
-        Log.d("TAG", "onResume: 123");
-
-    }
 }

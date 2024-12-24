@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.khanh.expensemanagement.R;
-import com.khanh.expensemanagement.model.Category;
+import com.khanh.expensemanagement.enums.Category;
 
 import java.util.List;
 
@@ -49,8 +49,8 @@ public class CategoryAdapter extends BaseAdapter {
         ImageView ivCategoryImage = convertView.findViewById(R.id.ivCategoryImage);
         TextView tvCategoryName = convertView.findViewById(R.id.tvCategoryName);
 
-        ivCategoryImage.setImageResource(category.getImageResourceId());
-        tvCategoryName.setText(category.getName());
+        ivCategoryImage.setImageResource(category.getImageResId());
+        tvCategoryName.setText(category.getDisplayName());
 
         return convertView;
     }

@@ -15,14 +15,7 @@ import com.khanh.expensemanagement.R;
 import com.khanh.expensemanagement.adapter.MonthFragmentAdapter;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link GeneralFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class GeneralFragment extends Fragment {
-
-
     private int currentPosition;
     private String mParam1;
     private String mParam2;

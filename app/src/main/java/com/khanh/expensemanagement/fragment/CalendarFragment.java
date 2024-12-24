@@ -2,16 +2,24 @@ package com.khanh.expensemanagement.fragment;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.khanh.expensemanagement.R;
+import com.khanh.expensemanagement.adapter.TransactionAdapter;
+import com.khanh.expensemanagement.model.Transaction;
+import com.khanh.expensemanagement.repository.TransactionDAO;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -23,8 +31,9 @@ public class CalendarFragment extends Fragment {
     private MaterialCalendarView calendarView;
     private CalendarDay dateCurrent;
     private TextView txtStatus;
-
+    private TransactionDAO transactionDAO;
     private int selectedMonth, selectedYear;
+    private RecyclerView recyclerView;
 
     public CalendarFragment() {
         // Required empty public constructor
@@ -56,38 +65,84 @@ public class CalendarFragment extends Fragment {
         txtStatus.setOnClickListener(v -> {
             showMonthYearPickerDialog();
         });
-        txtStatus.setText((dateCurrent.getMonth() + 1) + "/" + dateCurrent.getYear());
+        recyclerView = view.findViewById(R.id.rvTransaction);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        txtStatus.setText((dateCurrent.getMonth() + 1) + "/" + dateCurrent.getYear());
+        transactionDAO = new TransactionDAO();
 
         handleEventClickCalendar();
         return view;
     }
 
-    private void handleEventClickCalendar() {
-        calendarView.setOnMonthChangedListener((widget, date) -> {
-            selectedMonth = date.getMonth() + 1;
-            selectedYear = date.getYear();
-            txtStatus.setText((date.getMonth() + 1) + "/" + date.getYear());
 
-        });
-        final CalendarDay[] selectedDate = {null};
-        calendarView.setOnDateChangedListener((widget, date, selected) -> {
-            if (selectedDate[0] != null && selectedDate[0].equals(date)) {
-                // Bỏ chọn ngày và reset biến
-                option = 1;
-                widget.setDateSelected(date, false);
-                selectedDate[0] = null; // Reset lại biến
-            } else {
-                // Chọn ngày mới và lưu vào biến
-                option = 0;
-                widget.setDateSelected(date, true);
-                selectedDate[0] = date; // Cập nhật ngày đã chọn
+    private void loadRecyclerView(List<Transaction> transactionList) {
+        TransactionAdapter transactionAdapter = new TransactionAdapter(getContext(), transactionList);
+
+        recyclerView.setAdapter(transactionAdapter);
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                View child = rv.findChildViewUnder(e.getX(), e.getY());
+
+                int position = rv.getChildAdapterPosition(child);
+                Transaction transaction = transactionList.get(position);
+                return true;
             }
 
 
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
         });
     }
 
+    private void handleEventClickCalendar() {
+        calendarView.setOnMonthChangedListener((widget, date) -> {
+            String formattedMonth = (date.getMonth() < 10) ? "0" + (date.getMonth() + 1) : String.valueOf(date.getMonth() + 1);
+            String formatDate = date.getYear() + "-" + formattedMonth;
+            Log.d("TAG", "handleEventClickCalendar: " + formatDate + "aa " + date.getDay());
+
+            txtStatus.setText((date.getMonth() + 1) + "-" + date.getYear());
+            transactionDAO.findTransactionsByMonthYear(formatDate, new TransactionDAO.TransactionCallback() {
+                @Override
+                public void onTransactionsFound(List<Transaction> transactions) {
+                    loadRecyclerView(transactions);
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            });
+        });
+
+        calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            String formattedMonth = (date.getMonth() < 10) ? "0" + (date.getMonth() + 1) : String.valueOf(date.getMonth() + 1);
+
+            String formattedDay = (date.getDay() < 10) ? "0" + date.getDay() : String.valueOf(date.getDay());
+
+            String str = date.getYear() + "-" + formattedMonth + "-" + formattedDay;
+            transactionDAO.findTransactionsBySpecificDate(str, new TransactionDAO.TransactionCallback() {
+                @Override
+                public void onTransactionsFound(List<Transaction> transactions) {
+                    loadRecyclerView(transactions);
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+
+            });
+        });
+    }
 
     private void showMonthYearPickerDialog() {
         // Lấy tham chiếu đến LayoutInflater và dialog view

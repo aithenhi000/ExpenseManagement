@@ -49,13 +49,8 @@ public class Utils {
         });
     }
 
-    public static String formatDate(String date) {
-        String[] parts = date.split("/");
-        return parts[2] + "-" + parts[1] + "-" + parts[0];
-    }
-
     private static String formatDateDDMMYYYY(CalendarDay calendarDay) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("vi", "VN"));
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", new Locale("vi", "VN"));
         return dateFormat.format(calendarDay.getDate());
     }
 
@@ -75,5 +70,6 @@ public class Utils {
             return null;
         }
     }
+
 
 }

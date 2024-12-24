@@ -1,6 +1,7 @@
 package com.khanh.expensemanagement.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,20 +9,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.khanh.expensemanagement.R;
-import com.khanh.expensemanagement.model.Transaction;
+import com.khanh.expensemanagement.enums.Category;
+import com.khanh.expensemanagement.model.Utils;
 
 import java.util.List;
+import java.util.Objects;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
-    public static final int EDIT_TRANSACTION_REQUEST_CODE = 1001;
-    private final List<Transaction> transactions;
+    private final List<com.khanh.expensemanagement.model.Transaction> transactions;
     private final Context context;
 
 
-    public TransactionAdapter(Context context, List<Transaction> transactions) {
+    public TransactionAdapter(Context context, List<com.khanh.expensemanagement.model.Transaction> transactions) {
         this.transactions = transactions;
         this.context = context;
     }
@@ -35,27 +38,27 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        com.khanh.expensemanagement.model.Transaction transaction = transactions.get(position);
+        Log.d("TAG", "onBindViewHolder: " + transaction.getCategory());
+        String currentDate = transaction.getDate();
+        if (position > 0 && currentDate.equals(transactions.get(position - 1).getDate())) {
+            holder.Time.setVisibility(View.GONE);
+        } else {
+            holder.Time.setVisibility(View.VISIBLE);
+            holder.Time.setText(currentDate);
+        }
 
-//        Transaction transaction = transactions.get(position); // Lấy giao dịch từ danh sách// Lấy ngày từ mảng
-//        String currentDate = transaction.getDate(); // Chỉnh sửa chỉ số thành 2
-//        if (position > 0 && currentDate.equals(transactions.get(position - 1).getDate())) {
-//            holder.Time.setVisibility(View.GONE);
-//        } else {
-//            holder.Time.setVisibility(View.VISIBLE);
-//            holder.Time.setText(currentDate);
-//        }
-//        Category category = db.getCategoryForID(transaction.getCategory_id());
-//        holder.IconImageView.setImageDrawable(CategoryIconMapper.getIconByCategory(context, category.getName())); // Lấy id biểu tượng
-//        holder.CategoryTextView.setText(category.getName()); // Lấy tên danh mục
-//        holder.amountTextView.setText(Utils.formatCurrency(transaction.getAmount()));
-//        int color;
-//        if (Objects.equals(category.getType(), "Expense")) {
-//            color = ContextCompat.getColor(context, R.color.error_red);
-//        } else {
-//            color = ContextCompat.getColor(context, R.color.success_green);
-//        }
-//        holder.amountTextView.setTextColor(color);
-//        holder.itemView.setOnClickListener(v -> listener.onTransactionClick(transaction));
+        holder.IconImageView.setImageResource(Category.fromString(transaction.getCategory()));// Lấy id biểu tượng
+        holder.CategoryTextView.setText(transaction.getCategory()); // Lấy tên danh mục
+        holder.amountTextView.setText(Utils.formatCurrency(transaction.getAmount()));
+        int color;
+        if (Objects.equals(transaction.getType(), "Expense")) {
+            color = ContextCompat.getColor(context, R.color.error_red);
+        } else {
+            color = ContextCompat.getColor(context, R.color.success_green);
+        }
+        holder.amountTextView.setTextColor(color);
+        //holder.itemView.setOnClickListener(v -> listener.onTransactionClick(transaction));
     }
 
     @Override

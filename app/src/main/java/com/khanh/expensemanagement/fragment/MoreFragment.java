@@ -42,8 +42,12 @@ public class MoreFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_more, container, false);
         TextView logoutButton = view.findViewById(R.id.logoutButton);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        TextView tvName = view.findViewById(R.id.tvName);
+        TextView tvEmail = view.findViewById(R.id.tvEmail);
+        tvName.setText("Họ và tên: " + mAuth.getCurrentUser().getDisplayName());
+        tvEmail.setText("Email: " + mAuth.getCurrentUser().getEmail());
         logoutButton.setOnClickListener(v -> {
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
             mAuth.signOut();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);

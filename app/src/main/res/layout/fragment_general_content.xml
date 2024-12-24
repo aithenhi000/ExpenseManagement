@@ -48,26 +48,12 @@
                     android:id="@+id/tvIncomeTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="16dp"
                     android:text="100.000"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvStatusIncome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:text="Tăng 300.000"
-                    android:textColor="@color/white"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/des1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:text="so với tháng trước"
-                    android:textColor="@color/white" />
             </LinearLayout>
 
             <LinearLayout
@@ -90,30 +76,14 @@
 
                 <TextView
                     android:id="@+id/tvExpenseTotal"
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="16dp"
                     android:text="200.000"
                     android:textSize="16sp"
-
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvStatusExpense"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:text="Tăng 300.000"
-                    android:textColor="@color/white"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/des2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:text="so với tháng trước"
-                    android:textColor="@color/white" />
             </LinearLayout>
 
 
