@@ -81,37 +81,21 @@ public class GeneralContentFragment extends Fragment {
         des1 = view.findViewById(R.id.des1);
         des2 = view.findViewById(R.id.des2);
 
-//        displayTransactionByCategory();
-//        lnIncome.setSelected(true);
-//        lnExpense.setSelected(false);
-//        displayChart(type);
-//        setColorTextView(type);
-//
-//
-//        // Sự kiện click vào Income
-//        lnIncome.setOnClickListener(v -> updateUI("Income", 0));
-//
-//        // Sự kiện click vào Expense
-//        lnExpense.setOnClickListener(v -> updateUI("Expense", 1));
-//
-//
-//        sharedViewModel = new ViewModelProvider(requireActivity()).get(TransactionSharedViewModel.class);
-//
-//        // Quan sát LiveData từ ViewModel
-//        sharedViewModel.getTransactionAddedNotifier().observe(getViewLifecycleOwner(), isAdded -> {
-//            if (isAdded) {
-//                updateContent();  // Gọi phương thức cập nhật nội dung
-//                sharedViewModel.resetTransactionAdded();  // Reset lại giá trị sau khi xử lý
-//            }
-//        });
+        displayTransactionByCategory();
+        lnIncome.setSelected(true);
+        lnExpense.setSelected(false);
+        displayChart(type);
+        setColorTextView(type);
+
+        lnIncome.setOnClickListener(v -> updateUI("Income", 0));
+        lnExpense.setOnClickListener(v -> updateUI("Expense", 1));
+
         return view;
     }
 
     private void updateUI(String newType, int viewPagerPosition) {
         if (!type.equals(newType)) {
             type = newType;
-
-            // Cập nhật trạng thái của các nút
             lnIncome.setSelected(type.equals("Income"));
             lnExpense.setSelected(type.equals("Expense"));
             displayTransactionByCategory();

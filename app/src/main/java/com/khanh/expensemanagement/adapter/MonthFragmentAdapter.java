@@ -1,7 +1,5 @@
 package com.khanh.expensemanagement.adapter;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -25,18 +23,15 @@ public class MonthFragmentAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         CalendarDay date = currentDate;
-        Log.d("TAG", "createFragment: " + position);
-
-        date = CalendarDay.from(date.getYear(), position, 1); // Thay đổi tháng
+        date = CalendarDay.from(date.getYear(), position, 1);
 
         return GeneralContentFragment.newInstance(date);
     }
 
     @Override
     public int getItemCount() {
-        return totalMonths; // Ví dụ: Hiển thị 12 tháng
+        return totalMonths;
     }
-
 }
 
 
