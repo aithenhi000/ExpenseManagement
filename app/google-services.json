@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "417958767791",
+    "firebase_url": "https://expensemanagement-2c32e-default-rtdb.firebaseio.com",
+    "project_id": "expensemanagement-2c32e",
+    "storage_bucket": "expensemanagement-2c32e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417958767791:android:d16b77b97258e443d7b85a",
+        "android_client_info": {
+          "package_name": "com.khanh.expensemanagement"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgbCKKixw44mY7h4vDWswiAQSsuNG-Jl4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

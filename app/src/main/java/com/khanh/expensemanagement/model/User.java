@@ -1,47 +1,27 @@
 package com.khanh.expensemanagement.model;
 
 public class User {
-    private int userId;
-    private String username;
-    private String password;
+    private String name;
     private String email;
 
-    public User(int userId, String username, String password, String email) {
-        this.userId = userId;
-        this.username = username;
-        this.password = password;
+    public User() {
+        // Constructor rỗng để Firebase có thể sử dụng
+    }
+
+    public User(String name, String email) {
+        this.name = name;
         this.email = email;
     }
 
-    public User(String username, String password, String email) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
+    public User(String name, String email, Object o) {
     }
 
-    // Getter và Setter
-    public int getUserId() {
-        return userId;
+    public String getName() {
+        return name;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -52,4 +32,3 @@ public class User {
         this.email = email;
     }
 }
-

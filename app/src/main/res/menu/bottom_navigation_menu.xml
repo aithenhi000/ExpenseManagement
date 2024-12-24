@@ -11,13 +11,9 @@
         android:title="Danh sách" />
     <item
         android:id="@+id/navigation_transaction"
-        android:icon="@drawable/ic_trans"
         android:background="@drawable/icon_add"
+        android:icon="@drawable/ic_trans"
         android:title="Thêm giao dịch" />
-    <item
-        android:id="@+id/navigation_report"
-        android:icon="@drawable/ic_report"
-        android:title="Báo cáo" />
     <item
         android:id="@+id/navigation_more"
         android:icon="@drawable/ic_more"

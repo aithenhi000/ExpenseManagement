@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,11 +22,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.khanh.expensemanagement.R;
-import com.khanh.expensemanagement.adapter.TransactionGroupAdapter;
-import com.khanh.expensemanagement.databases.DatabaseHelper;
 import com.khanh.expensemanagement.model.CategoryTotal;
 import com.khanh.expensemanagement.model.Utils;
-import com.khanh.expensemanagement.viewmodel.TransactionSharedViewModel;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
@@ -37,7 +33,6 @@ public class GeneralContentFragment extends Fragment {
     private static final String ARG_DATE = "date";
     private ArrayList<CategoryTotal> categoryTotals;
     private LinearLayout lnIncome, lnExpense;
-    private DatabaseHelper db;
     private PieDataSet pieDataSet;
     private PieData pieData;
     private PieChart pieChart;
@@ -46,7 +41,6 @@ public class GeneralContentFragment extends Fragment {
     private String type = "Income"; //mặc định cho view là income = true
     private RecyclerView recyclerView;
     private CalendarDay currentMonth;
-    private TransactionSharedViewModel sharedViewModel;
 
     public GeneralContentFragment() {
         // require a empty public constructor
@@ -63,7 +57,6 @@ public class GeneralContentFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = DatabaseHelper.getInstance(requireContext());
         if (getArguments() != null) {
             currentDate = getArguments().getParcelable(ARG_DATE);
         }
@@ -88,30 +81,29 @@ public class GeneralContentFragment extends Fragment {
         des1 = view.findViewById(R.id.des1);
         des2 = view.findViewById(R.id.des2);
 
-        displayTransactionByCategory();
-        displayTotal();
-        lnIncome.setSelected(true);
-        lnExpense.setSelected(false);
-        displayChart(type);
-        setColorTextView(type);
-
-
-        // Sự kiện click vào Income
-        lnIncome.setOnClickListener(v -> updateUI("Income", 0));
-
-        // Sự kiện click vào Expense
-        lnExpense.setOnClickListener(v -> updateUI("Expense", 1));
-
-        
-        sharedViewModel = new ViewModelProvider(requireActivity()).get(TransactionSharedViewModel.class);
-
-        // Quan sát LiveData từ ViewModel
-        sharedViewModel.getTransactionAddedNotifier().observe(getViewLifecycleOwner(), isAdded -> {
-            if (isAdded) {
-                updateContent();  // Gọi phương thức cập nhật nội dung
-                sharedViewModel.resetTransactionAdded();  // Reset lại giá trị sau khi xử lý
-            }
-        });
+//        displayTransactionByCategory();
+//        lnIncome.setSelected(true);
+//        lnExpense.setSelected(false);
+//        displayChart(type);
+//        setColorTextView(type);
+//
+//
+//        // Sự kiện click vào Income
+//        lnIncome.setOnClickListener(v -> updateUI("Income", 0));
+//
+//        // Sự kiện click vào Expense
+//        lnExpense.setOnClickListener(v -> updateUI("Expense", 1));
+//
+//
+//        sharedViewModel = new ViewModelProvider(requireActivity()).get(TransactionSharedViewModel.class);
+//
+//        // Quan sát LiveData từ ViewModel
+//        sharedViewModel.getTransactionAddedNotifier().observe(getViewLifecycleOwner(), isAdded -> {
+//            if (isAdded) {
+//                updateContent();  // Gọi phương thức cập nhật nội dung
+//                sharedViewModel.resetTransactionAdded();  // Reset lại giá trị sau khi xử lý
+//            }
+//        });
         return view;
     }
 
@@ -221,19 +213,6 @@ public class GeneralContentFragment extends Fragment {
     }
 
 
-    private void displayTotal() {
-        Long incomeTotal = db.getTotal("Income", currentDate.getMonth() + 1, currentDate.getYear());
-        Long expenseTotal = db.getTotal("Expense", currentDate.getMonth() + 1, currentDate.getYear());
-        Long incomeTotalPre = db.getTotal("Income", currentDate.getMonth(), currentDate.getYear());
-        Long expenseTotalPre = db.getTotal("Expense", currentDate.getMonth(), currentDate.getYear());
-        tvIncomeTotal.setText(Utils.formatCurrency(incomeTotal));
-        tvExpenseTotal.setText(Utils.formatCurrency(expenseTotal));
-
-        updateStatusText(tvStatusIncome, incomeTotal, incomeTotalPre, R.color.green, R.color.red);
-        updateStatusText(tvStatusExpense, expenseTotal, expenseTotalPre, R.color.red, R.color.green);
-        balance.setText("Chênh lệch: " + Utils.formatCurrency(Math.abs(incomeTotal - expenseTotal)));
-    }
-
     private void updateStatusText(TextView textView, Long currentTotal, Long previousTotal, int increaseColor, int decreaseColor) {
         long difference = currentTotal - previousTotal;
         if (difference > 0) {
@@ -250,16 +229,12 @@ public class GeneralContentFragment extends Fragment {
 
     private void displayTransactionByCategory() {
         Log.d("TAG", "onResume: displayTransactionByCategory");
-        categoryTotals = db.getTransactionByCategoryTotal(currentDate.getMonth() + 1, currentDate.getYear(), type);
-        TransactionGroupAdapter transactionGroupAdapter = new TransactionGroupAdapter(categoryTotals, requireContext(), db);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setAdapter(transactionGroupAdapter);
     }
 
 
     public void updateContent() {
         displayTransactionByCategory();
-        displayTotal();
         displayChart(type);
         Log.d("TAG", "onResume: 123");
 

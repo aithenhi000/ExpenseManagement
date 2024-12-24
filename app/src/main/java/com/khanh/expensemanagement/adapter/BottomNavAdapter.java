@@ -8,7 +8,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.khanh.expensemanagement.fragment.CalendarFragment;
 import com.khanh.expensemanagement.fragment.GeneralFragment;
 import com.khanh.expensemanagement.fragment.MoreFragment;
-import com.khanh.expensemanagement.fragment.ReportFragment;
 import com.khanh.expensemanagement.fragment.TransactionFragment;
 
 public class BottomNavAdapter extends FragmentStateAdapter {
@@ -27,8 +26,6 @@ public class BottomNavAdapter extends FragmentStateAdapter {
             case 2:
                 return new TransactionFragment();
             case 3:
-                return new ReportFragment();
-            case 4:
                 return new MoreFragment();
         }
 
@@ -37,6 +34,6 @@ public class BottomNavAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 5;
+        return 4;
     }
 }

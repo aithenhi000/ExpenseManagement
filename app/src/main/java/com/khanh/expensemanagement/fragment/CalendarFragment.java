@@ -1,8 +1,6 @@
 package com.khanh.expensemanagement.fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,43 +9,22 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
 import com.khanh.expensemanagement.R;
-import com.khanh.expensemanagement.activity.EditTransactionActivity;
-import com.khanh.expensemanagement.databases.DatabaseHelper;
-import com.khanh.expensemanagement.model.IncomeExpenseDecorator;
-import com.khanh.expensemanagement.model.MultiDecorator;
-import com.khanh.expensemanagement.model.Transaction;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class CalendarFragment extends Fragment implements TransactionClickListener {
+public class CalendarFragment extends Fragment {
     int option = 1;
     List<Object[]> incomeExpenseDays;
     private MaterialCalendarView calendarView;
     private CalendarDay dateCurrent;
-    private TransactionListFragment transactionViewFragment;
-    private TextView txtStatus, txt_expense, txt_income, txt_balance;
-    private DatabaseHelper db;
-    private TotalReportFragment totalReportFragment;
-    private final ActivityResultLauncher<Intent> editTransactionLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    updateTotal();
-                    updateTransactionList(dateCurrent);
-                    initCalendar();
-                }
-            }
-    );
-    private int selectedMonth, selectedYear;
+    private TextView txtStatus;
 
+    private int selectedMonth, selectedYear;
 
     public CalendarFragment() {
         // Required empty public constructor
@@ -63,16 +40,9 @@ public class CalendarFragment extends Fragment implements TransactionClickListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new DatabaseHelper(requireContext());
 
     }
 
-    @Override
-    public void onTransactionClick(Transaction transaction) {
-        Intent intent = new Intent(getContext(), EditTransactionActivity.class);
-        intent.putExtra("TRANSACTION", transaction);
-        editTransactionLauncher.launch(intent);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,11 +56,8 @@ public class CalendarFragment extends Fragment implements TransactionClickListen
         txtStatus.setOnClickListener(v -> {
             showMonthYearPickerDialog();
         });
-
         txtStatus.setText((dateCurrent.getMonth() + 1) + "/" + dateCurrent.getYear());
-        initTransactionList(dateCurrent, option);
-        initTotal(dateCurrent);
-        initCalendar();
+
 
         handleEventClickCalendar();
         return view;
@@ -100,9 +67,8 @@ public class CalendarFragment extends Fragment implements TransactionClickListen
         calendarView.setOnMonthChangedListener((widget, date) -> {
             selectedMonth = date.getMonth() + 1;
             selectedYear = date.getYear();
-            updateTransactionList(date);
             txtStatus.setText((date.getMonth() + 1) + "/" + date.getYear());
-            initTotal(date);
+
         });
         final CalendarDay[] selectedDate = {null};
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
@@ -117,49 +83,11 @@ public class CalendarFragment extends Fragment implements TransactionClickListen
                 widget.setDateSelected(date, true);
                 selectedDate[0] = date; // Cập nhật ngày đã chọn
             }
-            updateTransactionList(date);
 
 
         });
     }
 
-    private void updateTransactionList(CalendarDay date) {
-        if (transactionViewFragment != null && transactionViewFragment.isAdded()) {
-            transactionViewFragment.updateData(date, option);
-        } else {
-            initTransactionList(date, option);
-        }
-    }
-
-    private void initTransactionList(CalendarDay calendarDay, int option) {
-        transactionViewFragment = TransactionListFragment.newInstance(calendarDay, option);
-        getChildFragmentManager().beginTransaction()
-                .replace(R.id.rvTransaction, transactionViewFragment)
-                .commit();
-    }
-
-    private void updateTotal() {
-        if (totalReportFragment.isAdded()) {
-            totalReportFragment.updateData(dateCurrent);
-        } else {
-            initTotal(dateCurrent);
-        }
-    }
-
-    private void initTotal(CalendarDay calendarDay) {
-        totalReportFragment = TotalReportFragment.newInstance(calendarDay);
-        getChildFragmentManager().beginTransaction().replace(R.id.total, totalReportFragment).commit();
-    }
-
-    private void initCalendar() {
-        incomeExpenseDays = new ArrayList<>();
-        incomeExpenseDays = db.getDateListForType("Expense", "Income");
-        calendarView.addDecorators(new IncomeExpenseDecorator(incomeExpenseDays));
-        incomeExpenseDays = db.getDateListForType("Income", "Expense");
-        calendarView.addDecorators(new IncomeExpenseDecorator(incomeExpenseDays));
-        incomeExpenseDays = db.getDateBoth("Income", "Expense");
-        calendarView.addDecorator(new MultiDecorator(incomeExpenseDays));
-    }
 
     private void showMonthYearPickerDialog() {
         // Lấy tham chiếu đến LayoutInflater và dialog view
@@ -201,7 +129,6 @@ public class CalendarFragment extends Fragment implements TransactionClickListen
             txtStatus.setText(date);
             calendarView.setCurrentDate(calendarDay);
             txtStatus.setFocusable(false);
-            updateTransactionList(calendarDay);
         });
 
         // Khi người dùng nhấn nút "Cancel", không làm gì

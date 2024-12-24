@@ -15,18 +15,11 @@
         app:drawableStartCompat="@drawable/ic_setting" />
 
     <TextView
-        android:id="@+id/backup"
+        android:id="@+id/logoutButton"
         style="@style/TextViewMore"
         android:drawablePadding="10dp"
         android:text="Back up"
         app:drawableStartCompat="@drawable/backup" />
 
-
-    <TextView
-        android:id="@+id/deleteTrans"
-        style="@style/TextViewMore"
-        android:drawablePadding="10dp"
-        android:text="Đặt lại dữ liệu (Xóa tất cả dữ liệu giao dịch)"
-        app:drawableStartCompat="@drawable/baseline_wifi_protected_setup_24" />
 
 </LinearLayout>

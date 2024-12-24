@@ -13,13 +13,13 @@
         android:padding="6dp">
 
         <ImageView
-            android:id="@+id/icon"
+            android:id="@+id/ivCategoryImage"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:src="@drawable/ic_launcher_foreground" />
 
         <TextView
-            android:id="@+id/text"
+            android:id="@+id/tvCategoryName"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"

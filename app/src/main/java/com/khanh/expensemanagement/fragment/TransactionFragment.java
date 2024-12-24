@@ -18,7 +18,6 @@ import java.util.List;
 
 public class TransactionFragment extends Fragment {
     @Override
-    //Layout Inflater chuyển đổi (inflate) 1 tài nguyên XML thành 1 View
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_input_form_container, container, false);

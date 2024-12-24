@@ -1,31 +1,29 @@
 package com.khanh.expensemanagement.model;
 
 public class Category {
-    private int id;
     private String name;
-    private String type;
+    private int imageResourceId;
 
-
-    public Category(int id, String name, String type) {
-        this.id = id;
+    // Constructor
+    public Category(String name, int imageResourceId) {
         this.name = name;
-        this.type = type;
-
-
+        this.imageResourceId = imageResourceId;
     }
 
-
-    public int getId() {
-        return id;
-    }
-
+    // Getters and setters
     public String getName() {
         return name;
     }
 
-    public String getType() {
-        return type;
+    public void setName(String name) {
+        this.name = name;
     }
 
+    public int getImageResourceId() {
+        return imageResourceId;
+    }
 
+    public void setImageResourceId(int imageResourceId) {
+        this.imageResourceId = imageResourceId;
+    }
 }

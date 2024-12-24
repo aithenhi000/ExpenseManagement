@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.khanh.expensemanagement.R;
 import com.khanh.expensemanagement.adapter.TransactionAdapter;
-import com.khanh.expensemanagement.databases.DatabaseHelper;
 import com.khanh.expensemanagement.model.Category;
 import com.khanh.expensemanagement.model.Transaction;
 
@@ -26,7 +25,6 @@ public class IncomeFragment extends Fragment {
     private RecyclerView rvTransaction, rvCategory;
     private List<Category> categoryList;
     private Category selectedCategory;
-    private DatabaseHelper dbHelper;
     private List<Transaction> transactionList;
     private TransactionAdapter transactionAdapter;
 

@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.khanh.expensemanagement.R;
-import com.khanh.expensemanagement.databases.DatabaseHelper;
 import com.khanh.expensemanagement.model.CategoryIconMapper;
 import com.khanh.expensemanagement.model.CategoryTotal;
 import com.khanh.expensemanagement.model.Utils;
@@ -21,12 +20,10 @@ import java.util.List;
 public class TransactionGroupAdapter extends RecyclerView.Adapter<TransactionGroupAdapter.ViewHolder> {
     private final List<CategoryTotal> transactions;
     private final Context context;
-    private DatabaseHelper db;
 
-    public TransactionGroupAdapter(List<CategoryTotal> transactions, Context context, DatabaseHelper db) {
+    public TransactionGroupAdapter(List<CategoryTotal> transactions, Context context) {
         this.transactions = transactions;
         this.context = context;
-        this.db = db;
     }
 
     @NonNull

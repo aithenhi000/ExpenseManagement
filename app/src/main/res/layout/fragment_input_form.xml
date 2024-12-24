@@ -12,18 +12,18 @@
         android:text="Số tiền" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editMoney"
+        android:id="@+id/etAmount"
         style="@style/TextInputForm"
         android:inputType="number"
         android:maxLength="50" />
 
     <TextView
-        android:id="@+id/tvDate"
+        android:id="@+id/textNgay"
         style="@style/TextViewForm"
         android:text="Ngày" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/tiDate"
+        android:id="@+id/tiSelectedDate"
         style="@style/TextInputForm"
         android:focusable="false" />
 
@@ -35,7 +35,7 @@
 
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editNote"
+        android:id="@+id/etNote"
         style="@style/TextInputForm"
         android:maxLength="150"
         android:singleLine="true" />
@@ -45,15 +45,19 @@
         style="@style/TextViewForm"
         android:text="Danh mục" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCategory"
+    <GridView
+        android:id="@+id/gridViewCategories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp" />
+        android:columnWidth="150dp"
+        android:horizontalSpacing="20dp"
+        android:numColumns="3"
+        android:padding="16dp"
+        android:verticalSpacing="20dp" />
 
 
     <Button
-        android:id="@+id/btnAddTransaction"
+        android:id="@+id/btnSaveExpense"
         style="@null"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -67,6 +71,5 @@
         android:textColor="@color/strong_blue"
         android:translationZ="3dp"
         app:backgroundTint="@null" />
-
 
 </LinearLayout>

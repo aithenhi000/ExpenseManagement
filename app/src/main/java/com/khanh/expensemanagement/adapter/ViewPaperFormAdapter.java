@@ -18,9 +18,9 @@ public class ViewPaperFormAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                return TransactionFormFragment.newInstance("Expense");
+                return TransactionFormFragment.newInstance("expense");
             case 1:
-                return TransactionFormFragment.newInstance("Income");
+                return TransactionFormFragment.newInstance("income");
         }
         return null;
     }

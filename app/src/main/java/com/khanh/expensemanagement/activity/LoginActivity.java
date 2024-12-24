@@ -1,21 +1,19 @@
 package com.khanh.expensemanagement.activity;
 
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.khanh.expensemanagement.R;
-import com.khanh.expensemanagement.databases.DatabaseHelper;
-import com.khanh.expensemanagement.model.SharedPreferencesManager;
-import com.khanh.expensemanagement.model.User;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends AppCompatActivity {
 
-    private SharedPreferencesManager sharedPreferencesManager;
-    private EditText usernameEditText, passwordEditText;
+    private EditText emailEditText, passwordEditText;
     private Button loginButton, registerButton;
 
     @Override
@@ -23,57 +21,41 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        displayTitle("Đăng nhập");
-        // Khởi tạo SharedPreferences
-        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
-
-        // Liên kết các view
-        usernameEditText = findViewById(R.id.usernameEditText);
+        emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.registerButton);
 
-        // Xử lý sự kiện khi nhấn nút đăng nhập
-        loginButton.setOnClickListener(v -> login());
+        registerButton.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+        });
 
-        // Xử lý sự kiện khi nhấn nút đăng ký
-        registerButton.setPaintFlags(registerButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        registerButton.setOnClickListener(v -> register());
-    }
+        loginButton.setOnClickListener(v -> {
+            String email = emailEditText.getText().toString().trim();
+            String password = passwordEditText.getText().toString().trim();
 
-    private void login() {
-        String username = usernameEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
-        SharedPreferencesManager sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
-
-        // Kiểm tra xem người dùng đã tồn tại trong cơ sở dữ liệu chưa
-        DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);  // Giả sử UserDatabaseHelper là lớp giúp truy vấn DB
-        User user = dbHelper.getUserByUsername(username);
-
-        if (user != null) {
-            // Kiểm tra mật khẩu
-            if (user.getPassword().equals(password)) {
-                // Đăng nhập thành công, lưu thông tin đăng nhập vào SharedPreferences
-                sharedPreferencesManager.setLoggedInUser(username);
-
-                Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-
-                // Chuyển về MainActivity
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, "Mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
+            if (email.isEmpty() || password.isEmpty()) {
+                showToast("Please enter both email and password");
+                return;
             }
-        } else {
-            Toast.makeText(this, "Người dùng chưa được tạo, vui lòng đăng ký!", Toast.LENGTH_SHORT).show();
-        }
+
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // Đăng nhập thành công, chuyển về MainActivity
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();  // Đảm bảo không quay lại màn hình đăng nhập
+                        } else {
+                            // Đăng nhập thất bại, hiển thị thông báo lỗi
+                            showToast("Login failed: " + task.getException().getMessage());
+                        }
+                    });
+        });
     }
 
-
-    private void register() {
-        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-        startActivity(intent);
-        finish();
+    private void showToast(String message) {
+        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }
+
+
